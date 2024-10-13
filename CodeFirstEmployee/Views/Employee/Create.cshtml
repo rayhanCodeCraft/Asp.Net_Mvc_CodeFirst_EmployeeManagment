@@ -1,0 +1,103 @@
+﻿@model CodeFirstEmployee.Models.Employee
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@using (Html.BeginForm("Create", "Employee", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{@Html.AntiForgeryToken() @Html.ValidationSummary()
+
+<div class="container">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            @Html.LabelFor(e => e.EmployeeName, new { @class = "form-label" })
+            @Html.EditorFor(e => e.EmployeeName, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(e => e.EmployeeName, "", new { @class = "text-danger" })
+        </div>
+        <div class="col-md-6">
+            @Html.LabelFor(e => e.JoinDate)
+            @Html.EditorFor(e => e.JoinDate, new { htmlAttributes = new { @class = "form-control", @id = "joinDatePicker", placeholder = "Select Join Date" } })
+            @Html.ValidationMessageFor(e => e.JoinDate)
+        </div>
+
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            @Html.LabelFor(e => e.IsActive, new { @class = "form-label" })
+            @Html.EditorFor(e => e.IsActive, new { htmlAttributes = new { @class = "form-check-input" } })
+            @Html.ValidationMessageFor(e => e.IsActive, "", new { @class = "text-danger" })
+        </div>
+        <div class="col-md-6">
+            @Html.LabelFor(e => e.Email, new { @class = "form-label" })
+            @Html.EditorFor(e => e.Email, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(e => e.Email, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            @Html.LabelFor(e => e.Salary, new { @class = "form-label" })
+            @Html.EditorFor(e => e.Salary, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(e => e.Salary, "", new { @class = "text-danger" })
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <img src="~/Images/Noimage.jpg" id="imgFile" width="70" height="70" />
+
+                <input type="file" id="upimg" class="upimg" name="PicturePath" onchange="readUrl(this)" />
+                <label for="upimg">Upload</label>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div><h2>Select Qualification</h2></div>
+<div><a href="#" id="btnPlus">Add</a></div>
+<div id="qualiContain">
+    @Html.Action("AddNewQualification", "Employee")
+</div>
+<div>
+    <input type="submit" value="Create" />
+</div>
+}
+<script src="~/Scripts/jquery-3.7.1.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#joinDatePicker').datepicker({
+            format: 'mm/dd/yyyy', // Change format as needed
+            autoclose: true, // Automatically close the datepicker after selection
+            todayHighlight: true // Highlight today's date
+        });
+    });
+</script>
+
+<script>
+    function readUrl(input) {
+        if (input.files && input.files[0]) {
+            var rdr = new FileReader();
+            rdr.onload = function (e) {
+                $('#imgFile').attr('src', e.target.result);
+            };
+            rdr.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $("#btnPlus").click(function (e) {
+        e.preventDefault();
+        var contain = $('#qualiContain')
+        $.ajax({
+            url: "/Employee/AddNewQualification",
+            type: "GET",
+            success: function (d) {
+                contain.append(d)
+            }
+
+        });
+    })
+    $(document).on('click', '#btnDeleteQualification', function (e) {
+        e.preventDefault();
+        $(this).parent().parent().remove()
+    })
+</script>
